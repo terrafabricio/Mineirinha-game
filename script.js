@@ -1,5 +1,6 @@
 /* ============================================
-   SÍTIO DA MINEIRINHA - GAME + AUTH
+   SÍTIO DA MINEIRINHA
+   Harvest Town + Stardew Valley - Edição BR
    ============================================ */
 
 // ==========================================
@@ -11,6 +12,26 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ==========================================
+// ASSETS
+// ==========================================
+const ASSETS = {
+    crops: {
+        stage2: 'assets/crops/corn_stage_2.png',
+        stage4: 'assets/crops/corn_stage_4.png'
+    },
+    character: {
+        south: 'assets/character/rotations/south.png',
+        north: 'assets/character/rotations/north.png',
+        east: 'assets/character/rotations/east.png',
+        west: 'assets/character/rotations/west.png',
+        walkSouth: 'assets/character/walking/south.gif',
+        walkEast: 'assets/character/walking/east.gif',
+        walkNorth: 'assets/character/walking/north.gif',
+        walkWest: 'assets/character/walking/west.gif'
+    }
+};
+
+// ==========================================
 // GAME STATE
 // ==========================================
 const G = window.G = {
@@ -18,7 +39,7 @@ const G = window.G = {
     displayName: '',
     coins: 0,
     inv: { corn: 0, flour: 0, farofa: 0 },
-    plots: Array.from({ length: 9 }, () => ({ state: 'empty', growth: 0 })),
+    plots: Array.from({ length: 12 }, () => ({ state: 'empty', growth: 0 })),
     upgrades: { growth: 0, value: 0, toast: 0, plots: 0 },
     selectedTool: 'plant',
     selectedIngredients: ['manteiga'],
@@ -35,16 +56,16 @@ const CORN_PER_HARVEST = 2;
 const BASE_PRICE = 10;
 
 const FALAS = {
-    welcome: ['Bem-vinda ao sítio! Bora plantar!', 'Oi! Vamos fazer farofa!', 'Eita, chegou visita!'],
-    plant: ['Plantou direitinho!', 'Milho na terra!', 'Boa! Agora espera crescer!'],
-    water: ['Água fresquinha! 💧', 'Cresce mais rápido agora!'],
-    harvest: ['Colheita boa! 🌽', 'Milho bonito esse!'],
-    grind: ['Farinha saindo! 🌾', 'Moeu bonito!'],
-    cookPerfect: ['PERFEITO! Que cheiro bom! ⭐', 'Mão de ouro na cozinha!'],
-    cookGood: ['Ficou boa! 👍', 'Dá pra vender!'],
-    cookBad: ['Eita, queimou... 😅', 'Cuidado com o fogo!'],
-    sell: ['Vendeu! 💰', 'Moeda no bolso!', 'O povo ama!'],
-    noItem: ['Falta item! Volta na etapa anterior!']
+    welcome: ['Bem-vinda ao sítio!', 'Oi! Vamos fazer farofa!', 'Eita, chegou visita!'],
+    plant: ['Plantou direitinho!', 'Milho na terra!', 'Agora espera crescer!'],
+    water: ['Água fresquinha!', 'Cresce mais rápido!'],
+    harvest: ['Colheita boa!', 'Milho bonito esse!'],
+    grind: ['Farinha saindo!', 'Moeu bonito!'],
+    cookPerfect: ['PERFEITO! Que cheiro bom!', 'Mão de ouro!'],
+    cookGood: ['Ficou boa!', 'Dá pra vender!'],
+    cookBad: ['Eita, queimou...', 'Cuidado com o fogo!'],
+    sell: ['Vendeu!', 'Moeda no bolso!', 'O povo ama!'],
+    noItem: ['Falta item!']
 };
 
 // ==========================================
@@ -57,7 +78,6 @@ const $$ = s => document.querySelectorAll(s);
 // AUTH
 // ==========================================
 function initAuth() {
-    // Tab switching
     $$('.auth-tab').forEach(tab => {
         tab.addEventListener('click', () => {
             $$('.auth-tab').forEach(t => t.classList.remove('active'));
@@ -68,7 +88,6 @@ function initAuth() {
         });
     });
 
-    // Login
     $('#login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         hideAuthMessages();
@@ -76,12 +95,12 @@ function initAuth() {
         const password = $('#login-password').value;
         const btn = $('#login-form .auth-btn');
         btn.disabled = true;
-        btn.textContent = '⏳ Entrando...';
+        btn.textContent = 'Entrando...';
 
         const { data, error } = await sb.auth.signInWithPassword({ email, password });
 
         btn.disabled = false;
-        btn.textContent = '🎮 Jogar!';
+        btn.textContent = 'Jogar!';
 
         if (error) {
             showAuthError(traduzirErro(error.message));
@@ -93,7 +112,6 @@ function initAuth() {
         enterGame();
     });
 
-    // Register
     $('#register-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         hideAuthMessages();
@@ -102,7 +120,7 @@ function initAuth() {
         const password = $('#reg-password').value;
         const btn = $('#register-form .auth-btn');
         btn.disabled = true;
-        btn.textContent = '⏳ Criando...';
+        btn.textContent = 'Criando...';
 
         const { data, error } = await sb.auth.signUp({
             email,
@@ -111,14 +129,13 @@ function initAuth() {
         });
 
         btn.disabled = false;
-        btn.textContent = '📝 Criar Conta';
+        btn.textContent = 'Criar Conta';
 
         if (error) {
             showAuthError(traduzirErro(error.message));
             return;
         }
 
-        // Check if email confirmation is needed
         if (data.user && !data.session) {
             showAuthSuccess('Conta criada! Verifique seu e-mail para confirmar.');
             return;
@@ -131,7 +148,6 @@ function initAuth() {
         enterGame();
     });
 
-    // Logout
     $('#btn-logout').addEventListener('click', async () => {
         await saveGameToDB();
         await sb.auth.signOut();
@@ -139,7 +155,6 @@ function initAuth() {
         exitGame();
     });
 
-    // Check existing session
     checkSession();
 }
 
@@ -190,14 +205,13 @@ function enterGame() {
 function exitGame() {
     $('#game-screen').classList.remove('active');
     $('#auth-screen').classList.add('active');
-    // Reset forms
     $('#login-email').value = '';
     $('#login-password').value = '';
     hideAuthMessages();
 }
 
 // ==========================================
-// DATABASE SAVE/LOAD
+// DATABASE
 // ==========================================
 async function createSaveInDB(name) {
     await sb.from('game_saves').insert({
@@ -210,14 +224,13 @@ async function createSaveInDB(name) {
 }
 
 async function loadGameFromDB() {
-    const { data, error } = await supabase
+    const { data, error } = await sb
         .from('game_saves')
         .select('*')
         .eq('user_id', G.user.id)
         .single();
 
     if (error || !data) {
-        // First time - create save
         const name = G.user.user_metadata?.display_name || 'Jogador';
         G.displayName = name;
         await createSaveInDB(name);
@@ -239,7 +252,7 @@ async function loadGameFromDB() {
 
 async function saveGameToDB() {
     if (!G.user) return;
-    await supabase
+    await sb
         .from('game_saves')
         .update({
             coins: G.coins,
@@ -258,11 +271,31 @@ async function saveGameToDB() {
         .eq('user_id', G.user.id);
 }
 
-// Auto-save every 30s
 setInterval(() => { if (G.user) saveGameToDB(); }, 30000);
-
-// Save on page close
 window.addEventListener('beforeunload', () => { if (G.user) saveGameToDB(); });
+
+// ==========================================
+// CHARACTER
+// ==========================================
+function celebrateChar() {
+    const char = $('#character');
+    char.classList.remove('celebrate');
+    void char.offsetWidth;
+    char.classList.add('celebrate');
+    setTimeout(() => char.classList.remove('celebrate'), 600);
+}
+
+function walkChar(direction) {
+    const sprite = $('#char-sprite');
+    const dir = direction || ['east', 'west'][Math.round(Math.random())];
+    const key = 'walk' + dir.charAt(0).toUpperCase() + dir.slice(1);
+    if (ASSETS.character[key]) {
+        sprite.src = ASSETS.character[key];
+        setTimeout(() => {
+            sprite.src = ASSETS.character.south;
+        }, 700);
+    }
+}
 
 // ==========================================
 // SPEECH
@@ -276,26 +309,28 @@ function speak(category) {
     txt.textContent = msg;
     el.classList.remove('hidden');
     clearTimeout(window._st);
-    window._st = setTimeout(() => el.classList.add('hidden'), 3500);
-}
-
-function celebrateChar() {
-    const m = $('#mineirinha');
-    m.classList.remove('celebrate');
-    void m.offsetWidth;
-    m.classList.add('celebrate');
-    setTimeout(() => m.classList.remove('celebrate'), 700);
+    window._st = setTimeout(() => el.classList.add('hidden'), 3000);
 }
 
 // ==========================================
 // NOTIFICATIONS
 // ==========================================
-function notify(msg, type = 'ok') {
+function notify(msg, type) {
     const el = document.createElement('div');
-    el.className = `notif notif-${type}`;
+    el.className = 'notif notif-' + (type || 'ok');
     el.textContent = msg;
     $('#notifs').appendChild(el);
     setTimeout(() => el.remove(), 2600);
+}
+
+function floatItem(emoji, x, y) {
+    const el = document.createElement('div');
+    el.className = 'float-item';
+    el.textContent = emoji;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    $('#game-world').appendChild(el);
+    setTimeout(() => el.remove(), 1000);
 }
 
 // ==========================================
@@ -307,13 +342,11 @@ function updateHUD() {
     $('#hud-farofa').textContent = G.inv.farofa;
     $('#hud-coin-count').textContent = G.coins;
 
-    // Scene-specific
     $('#proc-corn').textContent = G.inv.corn;
     $('#cook-flour').textContent = G.inv.flour;
     $('#sell-farofa').textContent = G.inv.farofa;
     $('#sell-price-val').textContent = getSellPrice();
 
-    // Button states
     $('#btn-grind').disabled = G.inv.corn < 1;
     $('#btn-cook').disabled = G.inv.flour < 1;
     $('#btn-sell').disabled = G.inv.farofa < 1;
@@ -334,50 +367,61 @@ function getSellPrice() {
 function buildFarm() {
     const grid = $('#farm-grid');
     grid.innerHTML = '';
-    for (let i = 0; i < 9; i++) {
+    const count = window.innerWidth >= 768 ? 12 : (window.innerHeight > window.innerWidth ? 9 : 12);
+    // Ensure plots array matches
+    while (G.plots.length < count) G.plots.push({ state: 'empty', growth: 0 });
+
+    for (let i = 0; i < count; i++) {
         const tile = document.createElement('div');
-        tile.className = 'farm-tile tile-empty';
+        tile.className = 'farm-tile';
         tile.dataset.idx = i;
-        tile.innerHTML = `
-            <div class="tile-plant"></div>
-            <div class="tile-bar" style="display:none">
-                <div class="tile-bar-fill"></div>
-            </div>
-        `;
-        tile.addEventListener('click', () => onTileClick(i));
+        tile.innerHTML = '<div class="tile-plant"></div><div class="tile-bar"><div class="tile-bar-fill"></div></div>';
+        tile.addEventListener('click', function(e) { onTileClick(i, e); });
         grid.appendChild(tile);
     }
+    updateFarmVisuals();
 }
 
-function onTileClick(idx) {
+function onTileClick(idx, event) {
     const plot = G.plots[idx];
+    const tiles = $$('.farm-tile');
+    const tile = tiles[idx];
+    if (!tile) return;
+
+    const rect = tile.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top;
 
     if (G.selectedTool === 'plant' && plot.state === 'empty') {
         plot.state = 'growing';
         plot.growth = 0;
         speak('plant');
         celebrateChar();
-        notify('🌱 Plantou!', 'ok');
+        floatItem('🌱', cx, cy);
+        notify('+1 plantado!');
     } else if (G.selectedTool === 'water' && plot.state === 'growing') {
         plot.growth = Math.min(MAX_GROWTH, plot.growth + WATER_BOOST);
         if (plot.growth >= MAX_GROWTH) plot.state = 'ready';
         speak('water');
-        notify('💧 Regou!', 'ok');
+        floatItem('💧', cx, cy);
+        tile.classList.add('tile-water-flash');
+        setTimeout(() => tile.classList.remove('tile-water-flash'), 600);
     } else if (G.selectedTool === 'harvest' && plot.state === 'ready') {
         plot.state = 'empty';
         plot.growth = 0;
         G.inv.corn += CORN_PER_HARVEST;
         speak('harvest');
         celebrateChar();
-        notify(`+${CORN_PER_HARVEST} milho!`, 'ok');
+        floatItem('🌽', cx, cy);
+        notify('+' + CORN_PER_HARVEST + ' milho!');
 
-        // Harvest animation
-        const tiles = $$('.farm-tile');
-        const plant = tiles[idx]?.querySelector('.tile-plant');
+        const plant = tile.querySelector('.tile-plant');
         if (plant) {
             plant.classList.add('harvest-shake');
-            setTimeout(() => plant.classList.remove('harvest-shake'), 400);
+            setTimeout(() => plant.classList.remove('harvest-shake'), 500);
         }
+    } else {
+        return; // no action
     }
 
     updateFarmVisuals();
@@ -385,58 +429,64 @@ function onTileClick(idx) {
     saveGameToDB();
 }
 
-function updateFarmVisuals() {
-    const tiles = $$('.farm-tile');
-    G.plots.forEach((p, i) => {
-        if (i >= tiles.length) return;
-        const tile = tiles[i];
-        const plant = tile.querySelector('.tile-plant');
-        const bar = tile.querySelector('.tile-bar');
-        const fill = tile.querySelector('.tile-bar-fill');
-
-        tile.className = 'farm-tile';
-
-        switch (p.state) {
-            case 'empty':
-                tile.classList.add('tile-empty');
-                plant.textContent = '';
-                bar.style.display = 'none';
-                break;
-            case 'growing':
-                const pct = (p.growth / MAX_GROWTH) * 100;
-                bar.style.display = 'block';
-                fill.style.width = pct + '%';
-                if (pct < 30) plant.textContent = '🌱';
-                else if (pct < 60) plant.textContent = '🌿';
-                else if (pct < 90) plant.textContent = '🪴';
-                else plant.textContent = '🌽';
-                break;
-            case 'ready':
-                tile.classList.add('tile-ready');
-                plant.textContent = '🌽';
-                bar.style.display = 'block';
-                fill.style.width = '100%';
-                fill.style.background = 'linear-gradient(90deg, #FFD700, #FF8F00)';
-                break;
-        }
-    });
+function getCropHTML(growth) {
+    if (growth < 20) {
+        return '<div class="seed-dots"><div class="seed-dot"></div><div class="seed-dot"></div><div class="seed-dot"></div></div>';
+    } else if (growth < 55) {
+        return '<img src="' + ASSETS.crops.stage2 + '" style="width:75%;height:75%;">';
+    } else if (growth < 85) {
+        return '<img src="' + ASSETS.crops.stage2 + '" style="width:95%;height:95%;">';
+    } else {
+        return '<img src="' + ASSETS.crops.stage4 + '" style="width:100%;height:100%;">';
+    }
 }
 
-// Growth loop
+function updateFarmVisuals() {
+    var tiles = $$('.farm-tile');
+    for (var i = 0; i < tiles.length; i++) {
+        var p = G.plots[i];
+        if (!p) continue;
+        var tile = tiles[i];
+        var plant = tile.querySelector('.tile-plant');
+        var bar = tile.querySelector('.tile-bar');
+        var fill = tile.querySelector('.tile-bar-fill');
+
+        tile.classList.remove('tile-ready');
+
+        if (p.state === 'empty') {
+            plant.innerHTML = '';
+            bar.style.display = 'none';
+        } else if (p.state === 'growing') {
+            var pct = (p.growth / MAX_GROWTH) * 100;
+            bar.style.display = 'block';
+            fill.style.width = pct + '%';
+            fill.style.background = '';
+            plant.innerHTML = getCropHTML(p.growth);
+        } else if (p.state === 'ready') {
+            tile.classList.add('tile-ready');
+            plant.innerHTML = '<img src="' + ASSETS.crops.stage4 + '" style="width:100%;height:100%;">';
+            bar.style.display = 'block';
+            fill.style.width = '100%';
+            fill.style.background = 'linear-gradient(90deg, #FFD700, #FF8F00)';
+        }
+    }
+}
+
 function growthTick() {
-    const rate = GROWTH_RATE + G.upgrades.growth * 0.5;
-    let changed = false;
-    G.plots.forEach(p => {
+    var rate = GROWTH_RATE + G.upgrades.growth * 0.5;
+    var changed = false;
+    for (var i = 0; i < G.plots.length; i++) {
+        var p = G.plots[i];
         if (p.state === 'growing') {
             p.growth += rate;
             if (p.growth >= MAX_GROWTH) {
                 p.growth = MAX_GROWTH;
                 p.state = 'ready';
-                notify('🌽 Milho pronto!', 'ok');
+                notify('🌽 Milho pronto!');
             }
             changed = true;
         }
-    });
+    }
     if (changed) updateFarmVisuals();
 }
 
@@ -445,30 +495,45 @@ function growthTick() {
 // ==========================================
 function grindCorn() {
     if (G.inv.corn < 1) { speak('noItem'); return; }
-    const amt = Math.min(G.inv.corn, 5);
+    var amt = Math.min(G.inv.corn, 5);
     G.inv.corn -= amt;
     G.inv.flour += amt;
 
-    // Machine animation
-    const machine = $('#mill-machine');
-    machine.classList.add('grinding');
-    setTimeout(() => machine.classList.remove('grinding'), 1500);
+    var station = $('.grinder-station');
+    station.classList.add('grinding');
+
+    // Particles
+    var particles = $('#grinder-particles');
+    for (var i = 0; i < 8; i++) {
+        (function(idx) {
+            setTimeout(function() {
+                var p = document.createElement('div');
+                p.className = 'grinder-particle';
+                p.style.setProperty('--tx', (Math.random() * 50 - 25) + 'px');
+                p.style.left = (Math.random() * 40 - 20) + 'px';
+                particles.appendChild(p);
+                setTimeout(function() { p.remove(); }, 800);
+            }, idx * 80);
+        })(i);
+    }
+
+    setTimeout(function() { station.classList.remove('grinding'); }, 1500);
 
     speak('grind');
     celebrateChar();
-    notify(`+${amt} farinha!`, 'ok');
+    notify('+' + amt + ' farinha!');
     updateHUD();
     saveGameToDB();
 }
 
 // ==========================================
-// COOKING (TOAST + RECIPE)
+// COOKING
 // ==========================================
-let cookAnim = null;
-let cookPos = 0;
-let cookDir = 1;
-let cookSpeed = 2.5;
-let cookRunning = false;
+var cookAnim = null;
+var cookPos = 0;
+var cookDir = 1;
+var cookSpeed = 2.5;
+var cookRunning = false;
 
 function startCook() {
     if (G.inv.flour < 1) { speak('noItem'); return; }
@@ -483,7 +548,6 @@ function startCook() {
     $('#cook-timing').classList.add('active');
     $('#cook-result').classList.add('hidden');
 
-    // Stove fire on
     $('#stove').classList.add('cooking');
     $('#pan-contents').textContent = '🌾';
 
@@ -496,7 +560,7 @@ function animateCook() {
     if (cookPos >= 100) { cookPos = 100; cookDir = -1; }
     else if (cookPos <= 0) { cookPos = 0; cookDir = 1; }
 
-    $('#timing-needle').style.left = `calc(${cookPos}% - 3px)`;
+    $('#timing-needle').style.left = 'calc(' + cookPos + '% - 2px)';
     cookAnim = requestAnimationFrame(animateCook);
 }
 
@@ -510,15 +574,14 @@ function stopCook() {
     $('#cook-timing').classList.remove('active');
     $('#stove').classList.remove('cooking');
 
-    // Calculate quality
-    const perfectW = 1.2 + G.upgrades.toast * 0.3;
-    const total = 1.5 + 2 + perfectW + 2 + 1.5;
-    const rawEnd = (1.5 / total) * 100;
-    const goodEnd = rawEnd + (2 / total) * 100;
-    const perfectEnd = goodEnd + (perfectW / total) * 100;
-    const good2End = perfectEnd + (2 / total) * 100;
+    var perfectW = 1.2 + G.upgrades.toast * 0.3;
+    var total = 1.5 + 2 + perfectW + 2 + 1.5;
+    var rawEnd = (1.5 / total) * 100;
+    var goodEnd = rawEnd + (2 / total) * 100;
+    var perfectEnd = goodEnd + (perfectW / total) * 100;
+    var good2End = perfectEnd + (2 / total) * 100;
 
-    let quality, cls, text;
+    var quality, cls, text;
     if (cookPos >= goodEnd && cookPos <= perfectEnd) {
         quality = 'perfect'; cls = 'perfect'; text = '⭐ PERFEITO!';
         speak('cookPerfect');
@@ -526,7 +589,8 @@ function stopCook() {
         quality = 'good'; cls = 'good'; text = '👍 BOM!';
         speak('cookGood');
     } else {
-        quality = 'bad'; cls = 'bad'; text = cookPos < rawEnd ? '❄️ CRU...' : '🔥 QUEIMOU!';
+        quality = 'bad'; cls = 'bad';
+        text = cookPos < rawEnd ? '❄️ CRU...' : '🔥 QUEIMOU!';
         speak('cookBad');
     }
 
@@ -534,21 +598,16 @@ function stopCook() {
     G.inv.flour -= 1;
     G.inv.farofa += 1;
 
-    // Show result
-    const result = $('#cook-result');
+    var result = $('#cook-result');
     result.textContent = text;
-    result.className = `cook-result ${cls}`;
+    result.className = 'cook-result ' + cls;
     result.classList.remove('hidden');
-    setTimeout(() => result.classList.add('hidden'), 2500);
+    setTimeout(function() { result.classList.add('hidden'); }, 2500);
 
-    // Pan visual
-    const ingEmojis = G.selectedIngredients.map(i =>
-        ({ manteiga: '🧈', alho: '🧄', cebola: '🧅', bacon: '🥓' })[i] || ''
-    ).join('');
     $('#pan-contents').textContent = '🥣';
 
     celebrateChar();
-    notify('Farofa pronta!', 'ok');
+    notify('Farofa pronta!');
     updateHUD();
     saveGameToDB();
 }
@@ -558,38 +617,62 @@ function stopCook() {
 // ==========================================
 function sellFarofa(amount) {
     if (G.inv.farofa < 1) { speak('noItem'); return; }
-    const qty = amount === 'all' ? G.inv.farofa : Math.min(amount, G.inv.farofa);
-    const price = getSellPrice();
-    const total = qty * price;
+    var qty = amount === 'all' ? G.inv.farofa : Math.min(amount, G.inv.farofa);
+    var price = getSellPrice();
+    var total = qty * price;
 
     G.inv.farofa -= qty;
     G.coins += total;
     G.totalSold += qty;
     G.totalEarned += total;
 
-    // Coin animations
-    const container = $('#coin-anim-container');
-    for (let i = 0; i < Math.min(qty * 2, 10); i++) {
-        setTimeout(() => {
-            const coin = document.createElement('div');
-            coin.className = 'coin-fly';
-            coin.textContent = '🪙';
-            coin.style.left = (40 + Math.random() * 40) + '%';
-            coin.style.top = '50%';
-            coin.style.setProperty('--tx', (Math.random() * 50 - 25) + 'px');
-            container.appendChild(coin);
-            setTimeout(() => coin.remove(), 900);
-        }, i * 80);
+    // Product animation
+    var product = $('#stall-product');
+    product.classList.remove('sold');
+    void product.offsetWidth;
+    product.classList.add('sold');
+    setTimeout(function() { product.classList.remove('sold'); }, 600);
+
+    // Sparkle effect
+    var sparkleContainer = $('#stall-sparkle');
+    for (var i = 0; i < 5; i++) {
+        var s = document.createElement('div');
+        s.className = 'sparkle';
+        s.textContent = '✨';
+        s.style.left = (20 + Math.random() * 60) + '%';
+        s.style.top = (20 + Math.random() * 60) + '%';
+        s.style.animationDelay = (i * 0.1) + 's';
+        sparkleContainer.appendChild(s);
+        setTimeout(function(el) { el.remove(); }, 800, s);
+    }
+
+    // Coin fly animations
+    var container = $('#coin-anim-container');
+    var coinCount = Math.min(qty * 2, 12);
+    for (var j = 0; j < coinCount; j++) {
+        (function(idx) {
+            setTimeout(function() {
+                var coin = document.createElement('div');
+                coin.className = 'coin-fly';
+                coin.textContent = '$';
+                coin.style.left = (30 + Math.random() * 35) + '%';
+                coin.style.top = '55%';
+                coin.style.setProperty('--tx', (Math.random() * 70 - 35) + 'px');
+                container.appendChild(coin);
+                setTimeout(function() { coin.remove(); }, 1000);
+            }, idx * 70);
+        })(j);
     }
 
     // HUD coin pop
-    const coinEl = $('#hud-coins');
+    var coinEl = $('#hud-coins');
+    coinEl.classList.remove('coin-pop');
+    void coinEl.offsetWidth;
     coinEl.classList.add('coin-pop');
-    setTimeout(() => coinEl.classList.remove('coin-pop'), 500);
 
     speak('sell');
     celebrateChar();
-    notify(`+${total} moedas!`, 'coin');
+    notify('+' + total + ' moedas!', 'coin');
     updateHUD();
     saveGameToDB();
 }
@@ -599,22 +682,24 @@ function sellFarofa(amount) {
 // ==========================================
 function switchScene(name) {
     G.scene = name;
-    $$('.game-scene').forEach(s => s.classList.remove('active'));
-    $$('.scene-btn').forEach(b => b.classList.remove('active'));
-    $(`#scene-${name}`).classList.add('active');
-    $(`.scene-btn[data-scene="${name}"]`).classList.add('active');
 
-    // Adjust Mineirinha position per scene
-    const m = $('#mineirinha');
+    $$('.scene').forEach(function(s) { s.classList.remove('active'); });
+    $$('.scene-btn').forEach(function(b) { b.classList.remove('active'); });
+    $('#scene-' + name).classList.add('active');
+    $('.scene-btn[data-scene="' + name + '"]').classList.add('active');
+
+    walkChar();
+
+    var char = $('#character');
     switch (name) {
         case 'farm':
-            m.style.left = '12px'; m.style.bottom = '40%'; break;
+            char.style.left = '10px'; char.style.bottom = '35%'; break;
         case 'process':
-            m.style.left = '10px'; m.style.bottom = '35%'; break;
+            char.style.left = '8px'; char.style.bottom = '28%'; break;
         case 'cooking':
-            m.style.left = '8px'; m.style.bottom = '35%'; break;
+            char.style.left = '6px'; char.style.bottom = '30%'; break;
         case 'sell':
-            m.style.left = '15px'; m.style.bottom = '35%'; break;
+            char.style.left = '12px'; char.style.bottom = '28%'; break;
     }
 
     updateHUD();
@@ -624,19 +709,18 @@ function switchScene(name) {
 // INIT
 // ==========================================
 function init() {
-    // Build farm grid
     buildFarm();
 
     // Scene nav
-    $$('.scene-btn').forEach(btn => {
-        btn.addEventListener('click', () => switchScene(btn.dataset.scene));
+    $$('.scene-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { switchScene(btn.dataset.scene); });
     });
 
     // Farm tools
-    $$('.tool-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+    $$('.tool-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
             G.selectedTool = btn.dataset.tool;
-            $$('.tool-btn').forEach(b => b.classList.remove('active'));
+            $$('.tool-btn').forEach(function(b) { b.classList.remove('active'); });
             btn.classList.add('active');
         });
     });
@@ -649,25 +733,32 @@ function init() {
     $('#btn-cook-stop').addEventListener('click', stopCook);
 
     // Ingredients
-    $$('.ing-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const ing = btn.dataset.ing;
+    $$('.ing-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var ing = btn.dataset.ing;
             if (ing === 'manteiga') return; // always selected
-            const idx = G.selectedIngredients.indexOf(ing);
+            var idx = G.selectedIngredients.indexOf(ing);
             if (idx >= 0) G.selectedIngredients.splice(idx, 1);
             else G.selectedIngredients.push(ing);
-            $$('.ing-btn').forEach(b => {
+            $$('.ing-btn').forEach(function(b) {
                 b.classList.toggle('selected', G.selectedIngredients.includes(b.dataset.ing));
             });
         });
     });
 
     // Sell
-    $('#btn-sell').addEventListener('click', () => sellFarofa(1));
-    $('#btn-sell-all').addEventListener('click', () => sellFarofa('all'));
+    $('#btn-sell').addEventListener('click', function() { sellFarofa(1); });
+    $('#btn-sell-all').addEventListener('click', function() { sellFarofa('all'); });
 
     // Growth tick
     setInterval(growthTick, 500);
+
+    // Rebuild farm on resize (portrait/landscape switch)
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(buildFarm, 300);
+    });
 
     // Auth
     initAuth();

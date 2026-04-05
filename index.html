@@ -34,6 +34,7 @@
                     <div class="input-group"><label>E-mail</label><input type="email" id="login-email" required placeholder="seu@email.com" autocomplete="email"></div>
                     <div class="input-group"><label>Senha</label><input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password"></div>
                     <button type="submit" class="auth-btn">Jogar!</button>
+                    <button type="button" class="auth-link" id="btn-forgot">Esqueci minha senha</button>
                 </form>
                 <form id="register-form" class="auth-form">
                     <div class="input-group"><label>Nome</label><input type="text" id="reg-name" required placeholder="Mineirinha123" autocomplete="username"></div>
@@ -62,6 +63,9 @@
             </div>
             <div class="hud-right">
                 <div class="hud-coins" id="hud-coins"><span class="coin-symbol">$</span><span id="hud-coin-count">0</span></div>
+                <button class="hud-btn-shop" id="btn-shop" title="Melhorias">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l2 3h5l-4 3 1.5 5L8 9.5 3.5 12 5 7 1 4h5z"/></svg>
+                </button>
                 <button class="hud-btn-logout" id="btn-logout" title="Sair">
                     <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v2H4v8h3v2H2V2zm7 3l4 3-4 3V9H6V7h3V5z"/></svg>
                 </button>
@@ -88,35 +92,50 @@
 
             <!-- Game World -->
             <div id="game-world">
-                <!-- Character sprite -->
-                <div id="character">
-                    <img src="assets/character/rotations/south.png" id="char-sprite" alt="Mineirinha">
-                    <div class="char-shadow"></div>
-                </div>
                 <div id="speech" class="hidden"><span id="speech-msg"></span></div>
 
                 <!-- ====== SCENES ====== -->
+
                 <!-- FARM -->
                 <div id="scene-farm" class="scene active">
-                    <div class="farm-world">
-                        <!-- Decorations rendered by CSS -->
-                        <div class="farm-deco">
-                            <img src="assets/structures/farmhouse.png" class="deco-house" alt="">
+                    <div class="scene-bg farm-bg"></div>
+                    <div class="scene-ambient">
+                        <div class="pollen p1"></div><div class="pollen p2"></div><div class="pollen p3"></div>
+                        <div class="pollen p4"></div><div class="pollen p5"></div><div class="pollen p6"></div>
+                    </div>
+                    <div class="scene-content farm-layout">
+                        <div class="farm-left">
+                            <img src="assets/structures/farmhouse.png" class="farm-house" alt="">
+                            <div class="scene-char" id="char-farm">
+                                <img src="assets/character/rotations/south.png" class="char-sprite" alt="">
+                                <div class="char-shadow"></div>
+                            </div>
                         </div>
-                        <!-- Tile grid (4x4 = 16 plots) -->
-                        <div class="tile-grid" id="farm-grid"></div>
-                        <!-- Farm toolbar -->
-                        <div class="farm-tools" id="farm-tools">
-                            <button class="tool-btn active" data-tool="plant" title="Plantar"><span class="tool-ico">🌱</span></button>
-                            <button class="tool-btn" data-tool="water" title="Regar"><span class="tool-ico">💧</span></button>
-                            <button class="tool-btn" data-tool="harvest" title="Colher"><span class="tool-ico">🫳</span></button>
+                        <div class="farm-center">
+                            <div class="tile-grid" id="farm-grid"></div>
+                        </div>
+                        <div class="farm-right">
+                            <div class="farm-tools" id="farm-tools">
+                                <button class="tool-btn active" data-tool="plant" title="Plantar"><span class="tool-ico">🌱</span></button>
+                                <button class="tool-btn" data-tool="water" title="Regar"><span class="tool-ico">💧</span></button>
+                                <button class="tool-btn" data-tool="harvest" title="Colher"><span class="tool-ico">🫳</span></button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- PROCESS -->
                 <div id="scene-process" class="scene">
-                    <div class="station-layout">
+                    <div class="scene-bg workshop-bg"></div>
+                    <div class="scene-ambient">
+                        <div class="dust d1"></div><div class="dust d2"></div><div class="dust d3"></div>
+                        <div class="dust d4"></div><div class="dust d5"></div>
+                    </div>
+                    <div class="scene-content station-layout">
+                        <div class="scene-char" id="char-process">
+                            <img src="assets/character/rotations/east.png" class="char-sprite" alt="">
+                            <div class="char-shadow"></div>
+                        </div>
                         <div class="machine-area">
                             <img src="assets/machines/corn_grinder.png" class="machine-sprite" id="grinder-sprite" alt="Moinho">
                             <div class="machine-particles" id="grinder-particles"></div>
@@ -135,8 +154,19 @@
 
                 <!-- COOKING -->
                 <div id="scene-cooking" class="scene">
-                    <div class="station-layout">
+                    <div class="scene-bg kitchen-bg"></div>
+                    <div class="scene-ambient">
+                        <div class="heat-shimmer"></div>
+                    </div>
+                    <div class="scene-content station-layout">
+                        <div class="scene-char" id="char-cooking">
+                            <img src="assets/character/rotations/north.png" class="char-sprite" alt="">
+                            <div class="char-shadow"></div>
+                        </div>
                         <div class="cook-area">
+                            <div class="kitchen-shelf">
+                                <div class="shelf-jar j1"></div><div class="shelf-jar j2"></div><div class="shelf-jar j3"></div>
+                            </div>
                             <div class="stove" id="stove">
                                 <div class="stove-body"></div>
                                 <div class="pan"><div class="pan-contents" id="pan-contents"></div></div>
@@ -170,7 +200,15 @@
 
                 <!-- SELL -->
                 <div id="scene-sell" class="scene">
-                    <div class="station-layout">
+                    <div class="scene-bg market-bg"></div>
+                    <div class="scene-ambient">
+                        <div class="leaf l1"></div><div class="leaf l2"></div><div class="leaf l3"></div>
+                    </div>
+                    <div class="scene-content station-layout">
+                        <div class="scene-char" id="char-sell">
+                            <img src="assets/character/rotations/south.png" class="char-sprite" alt="">
+                            <div class="char-shadow"></div>
+                        </div>
                         <div class="market-area">
                             <div class="market-stall">
                                 <div class="stall-awning"></div>
@@ -179,6 +217,10 @@
                                     <div class="stall-sparkle" id="stall-sparkle"></div>
                                 </div>
                                 <div class="stall-base"></div>
+                            </div>
+                            <div class="market-demand" id="market-demand">
+                                <span class="demand-label">Demanda:</span>
+                                <span class="demand-val" id="demand-val">Normal</span>
                             </div>
                         </div>
                         <div class="station-panel wood-panel">
@@ -189,11 +231,25 @@
                             </div>
                             <button class="action-btn" id="btn-sell">Vender 1</button>
                             <button class="action-btn action-gold" id="btn-sell-all">Vender Tudo</button>
+                            <div class="sell-stats">
+                                <span class="stat-item">Vendidos: <span id="stat-sold">0</span></span>
+                            </div>
                         </div>
                     </div>
                     <div id="coin-anim-container"></div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Shop Overlay -->
+    <div id="shop-overlay" class="overlay hidden">
+        <div class="shop-panel">
+            <div class="shop-header">
+                <div class="shop-title">Melhorias do Sítio</div>
+                <button class="shop-close" id="shop-close">✕</button>
+            </div>
+            <div class="shop-grid" id="shop-grid"></div>
         </div>
     </div>
 

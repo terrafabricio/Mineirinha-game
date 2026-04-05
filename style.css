@@ -1,22 +1,24 @@
 /* ============================================
    SÍTIO DA MINEIRINHA
-   Landscape Tile-Based Pixel-Art Farming Game
-   Stardew Valley + Harvest Town - Edição BR
+   Stardew Valley Cozy Rural Premium
    ============================================ */
 
 :root {
     --tile: 48px;
-    --sky: #7EC8E3;
-    --sky-b: #B8E4F0;
-    --g1: #5DB75D; --g2: #4A9E4A; --g3: #3D8B3D;
-    --dirt: #9B7653; --dirt-d: #6B4C33; --dirt-l: #C4A47A;
+    /* Warm cozy palette */
+    --sky: #87CEEB; --sky-b: #C9E8F5;
+    --sunset: #F4C67A;
+    --g1: #6DB86D; --g2: #4FA34F; --g3: #3B8A3B;
+    --dirt: #A07850; --dirt-d: #6B4C33; --dirt-l: #C9A87A;
     --wood: #B8864E; --wood-d: #7A5730; --wood-l: #D4A86A; --wood-b: #4A3220;
-    --gold: #FFD700; --gold-d: #C8A600; --gold-g: rgba(255,215,0,0.4);
-    --red: #E05040; --red-d: #A03020;
+    --gold: #FFD700; --gold-d: #C8A600; --gold-g: rgba(255,215,0,0.35);
+    --red: #D94040; --red-d: #A03020;
     --green: #5CB85C; --green-d: #3D8B3D;
     --cream: #FFF8E1; --parch: #F5E6C8; --panel: #EDDCB3;
     --txt: #3E2723;
-    --sh: rgba(30,20,10,0.35);
+    --sh: rgba(40,25,10,0.3);
+    --warm-glow: rgba(255,200,100,0.08);
+    --stone: #8B8B7A; --stone-d: #6B6B5A; --stone-l: #A5A590;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -43,14 +45,14 @@ html, body {
 
 .auth-bg {
     position:absolute; inset:0; z-index:0;
-    background:linear-gradient(180deg, var(--sky) 0%, var(--sky-b) 55%, var(--g1) 55%, var(--g2) 75%, var(--g3) 100%);
+    background:linear-gradient(180deg, var(--sky) 0%, var(--sky-b) 50%, var(--sunset) 55%, var(--g1) 58%, var(--g2) 75%, var(--g3) 100%);
 }
 
 .auth-clouds { position:absolute; top:0; left:0; right:0; height:55%; overflow:hidden; }
 
 .cloud {
     position:absolute;
-    background:rgba(255,255,255,0.65);
+    background:rgba(255,255,255,0.7);
     border-radius:50px;
     animation:drift linear infinite;
 }
@@ -58,18 +60,18 @@ html, body {
 .c1 { width:80px; height:26px; top:12%; left:-80px; animation-duration:38s; }
 .c1::before { width:38px; height:38px; top:-16px; left:12px; }
 .c1::after { width:28px; height:28px; top:-8px; right:10px; }
-.c2 { width:55px; height:20px; top:24%; left:-55px; animation-duration:48s; animation-delay:12s; opacity:.45; }
+.c2 { width:55px; height:20px; top:24%; left:-55px; animation-duration:48s; animation-delay:12s; opacity:.5; }
 .c2::before { width:30px; height:30px; top:-12px; left:8px; }
-.c3 { width:95px; height:30px; top:6%; left:-95px; animation-duration:58s; animation-delay:22s; opacity:.55; }
+.c3 { width:95px; height:30px; top:6%; left:-95px; animation-duration:58s; animation-delay:22s; opacity:.6; }
 .c3::before { width:46px; height:46px; top:-20px; left:18px; }
 .c3::after { width:34px; height:34px; top:-10px; right:14px; }
 @keyframes drift { to { transform:translateX(calc(100vw + 200px)); } }
 
 .auth-ground {
-    position:absolute; bottom:0; left:0; right:0; height:45%;
+    position:absolute; bottom:0; left:0; right:0; height:42%;
     background:url('assets/tiles/grass_tile.png') repeat;
     background-size:48px 48px;
-    opacity:.25;
+    opacity:.2;
 }
 
 .auth-wrapper {
@@ -133,21 +135,23 @@ html, body {
     text-shadow:1px 2px 0 rgba(0,0,0,.3); letter-spacing:1px;
 }
 .auth-btn:active { transform:translateY(3px); box-shadow:0 1px 0 #2D6B2D; }
+.auth-link { background:none; border:none; color:var(--wood-d); font-size:10px; font-weight:700; cursor:pointer; text-decoration:underline; padding:2px 0; font-family:'Nunito',sans-serif; }
+.auth-link:hover { color:var(--gold-d); }
 .auth-error { margin-top:6px; padding:7px; background:#FFCDD2; border:2px solid var(--red); border-radius:5px; color:var(--red-d); font-size:11px; font-weight:700; text-align:center; }
 .auth-success { margin-top:6px; padding:7px; background:#C8E6C9; border:2px solid var(--green); border-radius:5px; color:var(--green-d); font-size:11px; font-weight:700; text-align:center; }
 
 /* ============================================
-   GAME LAYOUT (Landscape-first)
+   HUD
    ============================================ */
 #game-screen { flex-direction:column; }
 
 #hud {
     display:flex; align-items:center; justify-content:space-between;
     padding:3px 8px;
-    background:linear-gradient(180deg,var(--wood-d),var(--wood) 40%,var(--wood-d));
+    background:linear-gradient(180deg,#6B4A2E,var(--wood-d) 30%,var(--wood) 60%,var(--wood-d));
     border-bottom:3px solid var(--wood-b);
     height:36px; z-index:100;
-    box-shadow:0 2px 6px var(--sh);
+    box-shadow:0 2px 8px var(--sh);
 }
 .hud-left,.hud-center,.hud-right { display:flex; align-items:center; gap:6px; }
 .hud-avatar { width:26px; height:26px; border:2px solid var(--gold); border-radius:5px; overflow:hidden; background:var(--wood-b); box-shadow:0 0 5px var(--gold-g); }
@@ -158,15 +162,15 @@ html, body {
 .hud-icon-emoji { font-size:13px; line-height:1; }
 .hud-coins { display:flex; align-items:center; gap:3px; background:linear-gradient(180deg,rgba(255,215,0,.2),rgba(255,215,0,.08)); padding:2px 8px; border-radius:10px; border:2px solid var(--gold-d); font-family:'Press Start 2P',monospace; font-size:9px; color:var(--gold); text-shadow:1px 1px 0 rgba(0,0,0,.5); box-shadow:0 0 6px var(--gold-g); }
 .coin-symbol { font-family:'Press Start 2P',monospace; font-size:10px; color:var(--gold); font-weight:bold; }
+.hud-btn-shop { width:28px; height:28px; border:2px solid var(--gold-d); border-radius:5px; background:linear-gradient(180deg,var(--gold),var(--gold-d)); color:var(--wood-b); cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 0 var(--gold-d); }
+.hud-btn-shop:active { transform:translateY(2px); box-shadow:none; }
 .hud-btn-logout { width:28px; height:28px; border:2px solid #822; border-radius:5px; background:linear-gradient(180deg,var(--red),var(--red-d)); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 0 #611; }
 .hud-btn-logout:active { transform:translateY(2px); box-shadow:none; }
 .coin-pop { animation:cpop .45s ease; }
 @keyframes cpop { 0%{transform:scale(1)} 40%{transform:scale(1.3)} 100%{transform:scale(1)} }
 
-/* Game Layout: sidebar nav + world */
-#game-layout {
-    flex:1; display:flex; overflow:hidden;
-}
+/* Game Layout */
+#game-layout { flex:1; display:flex; overflow:hidden; }
 
 /* ============================================
    SCENE NAV (vertical sidebar)
@@ -177,92 +181,243 @@ html, body {
     background:linear-gradient(180deg,var(--wood),var(--wood-d));
     border-right:3px solid var(--wood-b);
     box-shadow:2px 0 6px var(--sh);
-    z-index:50;
-    gap:2px;
-    padding:4px 0;
+    z-index:50; gap:2px; padding:4px 0;
 }
-
 .scene-btn {
     display:flex; flex-direction:column; align-items:center;
     gap:1px; padding:8px 2px;
     border:none; background:transparent;
     color:var(--cream); cursor:pointer;
     opacity:.55; transition:all .15s;
-    position:relative;
-    border-left:3px solid transparent;
+    position:relative; border-left:3px solid transparent;
 }
-
-.scene-btn.active {
-    opacity:1;
-    background:rgba(255,215,0,.1);
-    border-left-color:var(--gold);
-}
-
+.scene-btn.active { opacity:1; background:rgba(255,215,0,.12); border-left-color:var(--gold); }
 .nav-icon { font-size:20px; line-height:1; }
 .nav-text { font-family:'Press Start 2P',monospace; font-size:5px; color:inherit; text-shadow:1px 1px 0 rgba(0,0,0,.3); }
 .scene-btn.active .nav-text { color:var(--gold); }
 
 /* ============================================
-   GAME WORLD
+   GAME WORLD & SCENES
    ============================================ */
 #game-world {
     flex:1; position:relative; overflow:hidden;
+    background:#2A3A20;
+}
+#game-world.scene-transitioning .scene { opacity:0; }
+
+.scene { display:none; position:absolute; inset:0; overflow:hidden; transition:opacity .15s ease; }
+.scene.active { display:flex; }
+
+/* Scene backgrounds */
+.scene-bg { position:absolute; inset:0; z-index:0; }
+.scene-ambient { position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+.scene-content { position:relative; z-index:2; width:100%; height:100%; }
+
+/* ---- FARM background ---- */
+.farm-bg {
+    background:
+        linear-gradient(180deg, var(--sky) 0%, var(--sky-b) 35%, transparent 36%),
+        linear-gradient(180deg, transparent 34%, var(--g1) 36%, var(--g2) 65%, var(--dirt) 90%, var(--dirt-d) 100%);
+}
+.farm-bg::before {
+    content:''; position:absolute; bottom:0; left:0; right:0; height:65%;
     background:url('assets/tiles/grass_tile.png') repeat;
-    background-size:var(--tile) var(--tile);
+    background-size:48px 48px; opacity:.15;
+}
+.farm-bg::after {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 70% 30%, rgba(255,220,120,.12) 0%, transparent 60%);
 }
 
-/* Character */
-#character {
-    position:absolute; z-index:50;
-    transition:left .5s ease,bottom .5s ease;
+/* ---- WORKSHOP background ---- */
+.workshop-bg {
+    background:
+        repeating-linear-gradient(0deg, var(--wood) 0px, var(--wood-l) 2px, var(--wood) 4px, var(--wood-d) 20px, var(--wood) 22px),
+        linear-gradient(180deg, var(--wood-d), var(--wood));
 }
-#char-sprite {
+.workshop-bg::before {
+    content:''; position:absolute; top:8%; right:12%; width:80px; height:60px;
+    background:linear-gradient(180deg, var(--sky-b), var(--sky));
+    border:4px solid var(--wood-b); border-radius:3px;
+    box-shadow:inset 0 0 15px rgba(135,206,235,.3), 0 0 20px rgba(255,220,140,.15);
+}
+.workshop-bg::after {
+    content:''; position:absolute; top:8%; right:12%; width:80px; height:200px;
+    background:linear-gradient(180deg, rgba(255,220,140,.1) 0%, transparent 100%);
+    transform:perspective(200px) rotateX(-5deg); transform-origin:top;
+    pointer-events:none;
+}
+
+/* ---- KITCHEN background ---- */
+.kitchen-bg {
+    background:
+        repeating-linear-gradient(0deg, var(--stone) 0px, var(--stone-l) 1px, var(--stone) 3px, var(--stone-d) 16px),
+        linear-gradient(180deg, var(--stone-d), var(--stone));
+}
+.kitchen-bg::before {
+    content:''; position:absolute; bottom:0; left:0; right:0; height:35%;
+    background:repeating-linear-gradient(90deg, var(--wood-d) 0px, var(--wood) 2px, var(--wood-l) 48px, var(--wood) 50px);
+}
+.kitchen-bg::after {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 40% 70%, rgba(255,150,50,.12) 0%, transparent 50%);
+}
+
+/* ---- MARKET background ---- */
+.market-bg {
+    background:linear-gradient(180deg, var(--sky) 0%, var(--sky-b) 40%, var(--g1) 42%, var(--g2) 60%, var(--dirt-l) 80%, var(--dirt) 100%);
+}
+.market-bg::before {
+    content:''; position:absolute; bottom:0; left:0; right:0; height:55%;
+    background:url('assets/tiles/grass_tile.png') repeat;
+    background-size:48px 48px; opacity:.12;
+}
+.market-bg::after {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 50% 20%, rgba(255,220,120,.1) 0%, transparent 50%);
+}
+
+/* ============================================
+   AMBIENT PARTICLES
+   ============================================ */
+/* Farm pollen */
+.pollen {
+    position:absolute; width:4px; height:4px;
+    background:rgba(255,230,100,.6); border-radius:50%;
+    animation:pollenFloat 8s ease-in-out infinite;
+}
+.p1 { left:15%; top:60%; animation-delay:0s; animation-duration:7s; }
+.p2 { left:45%; top:40%; animation-delay:1.5s; animation-duration:9s; }
+.p3 { left:70%; top:55%; animation-delay:3s; animation-duration:8s; }
+.p4 { left:25%; top:30%; animation-delay:4.5s; animation-duration:10s; }
+.p5 { left:85%; top:45%; animation-delay:2s; animation-duration:7.5s; }
+.p6 { left:55%; top:65%; animation-delay:5s; animation-duration:9.5s; }
+@keyframes pollenFloat {
+    0%,100% { transform:translate(0,0) scale(.8); opacity:.4; }
+    25% { transform:translate(12px,-20px) scale(1); opacity:.8; }
+    50% { transform:translate(-8px,-35px) scale(.9); opacity:.6; }
+    75% { transform:translate(15px,-15px) scale(1.1); opacity:.7; }
+}
+
+/* Workshop dust */
+.dust {
+    position:absolute; width:3px; height:3px;
+    background:rgba(255,240,200,.35); border-radius:50%;
+    animation:dustDrift 6s ease-in-out infinite;
+}
+.d1 { right:20%; top:20%; animation-delay:0s; }
+.d2 { right:25%; top:30%; animation-delay:1s; animation-duration:7s; }
+.d3 { right:15%; top:15%; animation-delay:2s; animation-duration:5s; }
+.d4 { right:30%; top:25%; animation-delay:3s; animation-duration:8s; }
+.d5 { right:18%; top:35%; animation-delay:4s; animation-duration:6s; }
+@keyframes dustDrift {
+    0%,100% { transform:translate(0,0); opacity:.2; }
+    50% { transform:translate(-10px,15px); opacity:.5; }
+}
+
+/* Kitchen heat shimmer */
+.heat-shimmer {
+    position:absolute; left:20%; bottom:30%; width:30%; height:30%;
+    background:linear-gradient(0deg, rgba(255,150,50,.06) 0%, transparent 100%);
+    animation:shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+    0%,100% { opacity:.3; transform:scaleY(1); }
+    50% { opacity:.6; transform:scaleY(1.05); }
+}
+
+/* Market leaves */
+.leaf {
+    position:absolute; width:8px; height:6px;
+    background:var(--g1); border-radius:50% 0 50% 0;
+    animation:leafFall 10s linear infinite;
+    opacity:.4;
+}
+.l1 { left:10%; top:-10px; animation-delay:0s; animation-duration:8s; }
+.l2 { left:60%; top:-10px; animation-delay:3s; animation-duration:11s; }
+.l3 { left:80%; top:-10px; animation-delay:6s; animation-duration:9s; }
+@keyframes leafFall {
+    0% { transform:translate(0,0) rotate(0deg); opacity:.5; }
+    100% { transform:translate(-30px, calc(100vh + 20px)) rotate(720deg); opacity:0; }
+}
+
+/* ============================================
+   PER-SCENE CHARACTER
+   ============================================ */
+.scene-char {
+    position:absolute; z-index:10;
+    transition:transform .3s ease;
+}
+.scene-char .char-sprite {
     width:48px; height:48px;
-    animation:idle 2.5s ease-in-out infinite;
     filter:drop-shadow(0 2px 3px var(--sh));
     position:relative; z-index:2;
 }
-.char-shadow {
+.scene-char .char-shadow {
     position:absolute; bottom:-1px; left:50%; transform:translateX(-50%);
     width:28px; height:7px;
-    background:radial-gradient(ellipse,rgba(0,0,0,.28) 0%,transparent 70%);
+    background:radial-gradient(ellipse,rgba(0,0,0,.25) 0%,transparent 70%);
 }
-@keyframes idle { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
-#character.celebrate #char-sprite { animation:celeb .6s ease; }
-@keyframes celeb { 0%{transform:translateY(0) scale(1)} 30%{transform:translateY(-10px) scale(1.1)} 60%{transform:translateY(-1px) scale(.95)} 100%{transform:translateY(0) scale(1)} }
+
+/* Idle animations per scene */
+#char-farm { bottom:18%; left:8%; }
+#char-farm .char-sprite { animation:idleFarm 2.5s ease-in-out infinite; }
+@keyframes idleFarm { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+#char-process { bottom:15%; left:10%; }
+#char-process .char-sprite { animation:idleProcess 3s ease-in-out infinite; }
+@keyframes idleProcess { 0%,100%{transform:translateX(0)} 50%{transform:translateX(3px)} }
+
+#char-cooking { bottom:12%; left:18%; }
+#char-cooking .char-sprite { animation:idleCook 2s ease-in-out infinite; }
+@keyframes idleCook { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-2deg)} 75%{transform:rotate(2deg)} }
+
+#char-sell { bottom:18%; left:8%; }
+#char-sell .char-sprite { animation:idleSell 3s ease-in-out infinite; }
+@keyframes idleSell { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-2px) scale(1.02)} }
+
+/* Action animations */
+.char-action-harvest .char-sprite { animation:actHarvest .5s ease !important; }
+@keyframes actHarvest { 0%{transform:translateY(0) scale(1)} 30%{transform:translateY(-8px) scale(1.1)} 100%{transform:translateY(0) scale(1)} }
+
+.char-action-grind .char-sprite { animation:actGrind .6s ease !important; }
+@keyframes actGrind { 0%,100%{transform:translateX(0)} 25%{transform:translateX(4px)} 75%{transform:translateX(-4px)} }
+
+.char-action-stir .char-sprite { animation:actStir .5s ease !important; }
+@keyframes actStir { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-4deg)} 75%{transform:rotate(4deg)} }
+
+.char-action-sell .char-sprite { animation:actSell .5s ease !important; }
+@keyframes actSell { 0%{transform:scale(1)} 30%{transform:scale(1.15) translateY(-5px)} 100%{transform:scale(1)} }
 
 /* Speech */
 #speech {
-    position:absolute; z-index:60;
+    position:absolute; z-index:60; top:8px; left:50%; transform:translateX(-50%);
     background:linear-gradient(180deg,#fff,var(--parch));
     border:3px solid var(--wood-d); border-radius:10px;
-    padding:6px 12px; max-width:160px;
+    padding:6px 12px; max-width:200px;
     font-size:10px; font-weight:800; color:var(--txt);
     box-shadow:0 3px 6px var(--sh);
     animation:spop .3s ease;
+    text-align:center;
 }
 #speech::after {
-    content:''; position:absolute; bottom:-8px; left:16px;
+    content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%);
     border-left:7px solid transparent; border-right:7px solid transparent;
     border-top:8px solid var(--wood-d);
 }
-@keyframes spop { from{transform:scale(.6) translateY(8px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
-
-/* ============================================
-   SCENES (shared)
-   ============================================ */
-.scene { display:none; position:absolute; inset:0; overflow:hidden; }
-.scene.active { display:flex; }
+@keyframes spop { from{transform:translateX(-50%) scale(.6) translateY(8px);opacity:0} to{transform:translateX(-50%) scale(1) translateY(0);opacity:1} }
 
 /* ============================================
    FARM SCENE
    ============================================ */
-#scene-farm { flex-direction:row; align-items:center; justify-content:center; gap:12px; padding:8px; }
-
-.farm-world { display:flex; align-items:center; gap:16px; }
-
-.farm-deco { display:flex; flex-direction:column; align-items:center; }
-.deco-house { width:100px; height:auto; filter:drop-shadow(0 4px 8px var(--sh)); }
+.farm-layout {
+    display:flex; align-items:center; justify-content:center;
+    gap:16px; padding:8px; height:100%;
+}
+.farm-left { display:flex; flex-direction:column; align-items:center; position:relative; }
+.farm-house { width:90px; height:auto; filter:drop-shadow(0 4px 8px var(--sh)); }
+.farm-center { display:flex; align-items:center; justify-content:center; }
+.farm-right { display:flex; flex-direction:column; gap:4px; }
 
 /* Tile grid */
 .tile-grid {
@@ -279,10 +434,8 @@ html, body {
 
 .farm-tile {
     width:var(--tile); height:var(--tile);
-    border-radius:2px;
-    cursor:pointer;
-    position:relative;
-    overflow:hidden;
+    border-radius:2px; cursor:pointer;
+    position:relative; overflow:hidden;
     background:url('assets/tiles/farm_soil_tile.png') center/cover;
     transition:transform .1s,box-shadow .1s;
     box-shadow:inset 0 1px 2px rgba(0,0,0,.15);
@@ -316,9 +469,7 @@ html, body {
 @keyframes hpop { 0%{transform:scale(1) rotate(0)} 20%{transform:scale(1.2) rotate(-5deg)} 50%{transform:scale(.9) rotate(5deg)} 100%{transform:scale(1) rotate(0)} }
 
 /* Farm tools */
-.farm-tools {
-    display:flex; flex-direction:column; gap:4px;
-}
+.farm-tools { display:flex; flex-direction:column; gap:4px; }
 .tool-btn {
     width:42px; height:42px;
     display:flex; align-items:center; justify-content:center;
@@ -344,7 +495,6 @@ html, body {
     gap:20px; padding:12px;
 }
 
-/* Wood panel */
 .wood-panel {
     background:linear-gradient(180deg,var(--parch),var(--panel));
     border:4px solid var(--wood-d); border-radius:8px;
@@ -415,6 +565,18 @@ html, body {
    COOKING SCENE
    ============================================ */
 .cook-area { display:flex; flex-direction:column; align-items:center; gap:8px; }
+
+.kitchen-shelf {
+    display:flex; gap:8px; margin-bottom:4px;
+}
+.shelf-jar {
+    width:14px; height:20px; border-radius:2px 2px 4px 4px;
+    border:2px solid rgba(0,0,0,.15);
+    box-shadow:inset 0 -4px 0 rgba(0,0,0,.08);
+}
+.j1 { background:linear-gradient(180deg,#E8D5B0,#D4A86A); }
+.j2 { background:linear-gradient(180deg,#C8E6C9,#81C784); }
+.j3 { background:linear-gradient(180deg,#FFCDD2,#E57373); }
 
 .stove { position:relative; width:100px; height:85px; }
 .stove-body {
@@ -497,7 +659,7 @@ html, body {
 /* ============================================
    SELL SCENE
    ============================================ */
-.market-area { display:flex; flex-direction:column; align-items:center; }
+.market-area { display:flex; flex-direction:column; align-items:center; gap:6px; }
 .market-stall { display:flex; flex-direction:column; align-items:center; }
 .stall-awning {
     width:140px; height:24px;
@@ -530,6 +692,21 @@ html, body {
     box-shadow:0 3px 0 rgba(30,15,5,.4);
 }
 
+.market-demand {
+    font-family:'Press Start 2P',monospace; font-size:7px; color:var(--cream);
+    background:rgba(0,0,0,.35); padding:3px 8px; border-radius:8px;
+    display:flex; gap:4px; align-items:center;
+    text-shadow:1px 1px 0 rgba(0,0,0,.5);
+}
+.demand-val { color:var(--gold); }
+.demand-high { color:#6ECF72; }
+.demand-low { color:#EF9A9A; }
+
+.sell-stats {
+    font-family:'Press Start 2P',monospace; font-size:6px; color:var(--wood-d);
+    text-align:center; padding-top:4px; border-top:1px dashed var(--wood);
+}
+
 #coin-anim-container { position:absolute; inset:0; pointer-events:none; z-index:200; }
 .coin-fly {
     position:absolute;
@@ -538,6 +715,75 @@ html, body {
     animation:cfly 1s ease forwards;
 }
 @keyframes cfly { 0%{opacity:1;transform:translate(0,0) scale(1) rotate(0)} 100%{opacity:0;transform:translate(var(--tx),-80px) scale(.4) rotate(360deg)} }
+
+/* ============================================
+   SHOP OVERLAY
+   ============================================ */
+.overlay {
+    position:fixed; inset:0; z-index:500;
+    background:rgba(20,10,5,.65);
+    display:flex; align-items:center; justify-content:center;
+    animation:overlayIn .2s ease;
+}
+@keyframes overlayIn { from{opacity:0} to{opacity:1} }
+
+.shop-panel {
+    background:linear-gradient(180deg,var(--parch),var(--panel));
+    border:4px solid var(--wood-d); border-radius:10px;
+    padding:14px; max-width:420px; width:90%;
+    box-shadow:0 6px 0 var(--wood-b),0 8px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.3);
+    max-height:80vh; overflow-y:auto;
+}
+.shop-header {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:10px; padding-bottom:8px;
+    border-bottom:3px solid var(--wood);
+}
+.shop-title {
+    font-family:'Press Start 2P',monospace; font-size:10px; color:var(--wood-b);
+}
+.shop-close {
+    width:28px; height:28px; border:2px solid var(--red-d); border-radius:5px;
+    background:linear-gradient(180deg,var(--red),var(--red-d));
+    color:#fff; font-size:14px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 0 #611;
+}
+.shop-close:active { transform:translateY(2px); box-shadow:none; }
+
+.shop-grid { display:flex; flex-direction:column; gap:8px; }
+.shop-item {
+    display:flex; align-items:center; gap:10px;
+    padding:8px; background:rgba(255,255,255,.25);
+    border:2px solid var(--wood); border-radius:6px;
+}
+.shop-item-icon { font-size:24px; min-width:32px; text-align:center; }
+.shop-item-info { flex:1; }
+.shop-item-name { font-family:'Press Start 2P',monospace; font-size:7px; color:var(--wood-b); }
+.shop-item-desc { font-size:10px; color:var(--txt); font-weight:700; margin-top:2px; }
+.shop-item-level {
+    display:flex; gap:2px; margin-top:3px;
+}
+.shop-pip {
+    width:8px; height:8px; border-radius:2px;
+    border:1px solid var(--wood-d); background:var(--wood);
+}
+.shop-pip.filled { background:var(--gold); border-color:var(--gold-d); box-shadow:0 0 4px var(--gold-g); }
+.shop-item-buy {
+    padding:6px 10px; border:2px solid #2D6B2D; border-radius:5px;
+    background:linear-gradient(180deg,#7ED87E,var(--green));
+    color:#fff; font-family:'Press Start 2P',monospace; font-size:7px;
+    cursor:pointer; box-shadow:0 2px 0 #2D6B2D;
+    white-space:nowrap;
+}
+.shop-item-buy:hover:not(:disabled) { filter:brightness(1.1); }
+.shop-item-buy:active:not(:disabled) { transform:translateY(2px); box-shadow:none; }
+.shop-item-buy:disabled { opacity:.4; cursor:not-allowed; filter:grayscale(.5); }
+.shop-item-buy.maxed {
+    background:linear-gradient(180deg,var(--gold),var(--gold-d));
+    border-color:var(--gold-d); color:var(--wood-b);
+    box-shadow:0 2px 0 var(--gold-d);
+}
 
 /* ============================================
    NOTIFICATIONS
@@ -570,33 +816,25 @@ html, body {
    ============================================ */
 @media (orientation:portrait) {
     #game-layout { flex-direction:column-reverse; }
-
     #scene-nav {
         flex-direction:row; width:100%; min-width:unset;
         height:48px; min-height:48px;
         border-right:none; border-top:3px solid var(--wood-b);
-        box-shadow:0 -2px 6px var(--sh);
-        padding:0 4px;
+        box-shadow:0 -2px 6px var(--sh); padding:0 4px;
     }
-
-    .scene-btn {
-        flex:1; border-left:none;
-        border-top:3px solid transparent;
-        padding:4px 2px;
-    }
+    .scene-btn { flex:1; border-left:none; border-top:3px solid transparent; padding:4px 2px; }
     .scene-btn.active { border-left-color:transparent; border-top-color:var(--gold); }
-
     .station-layout { flex-direction:column; gap:10px; }
-    .farm-world { flex-direction:column; gap:8px; }
+    .farm-layout { flex-direction:column; gap:8px; }
     .farm-tools { flex-direction:row; }
-    .deco-house { width:70px; }
+    .farm-house { width:70px; }
     .machine-sprite { width:90px; height:90px; }
     .stall-body,.stall-awning,.stall-base { width:120px; }
     .stall-product { width:56px; height:56px; }
-
-    --tile: 44px;
     .tile-grid { grid-template-columns:repeat(4,44px); grid-template-rows:repeat(4,44px); }
     .farm-tile { width:44px; height:44px; }
+    .scene-char .char-sprite { width:40px; height:40px; }
+    #char-farm,#char-process,#char-cooking,#char-sell { position:relative; bottom:auto; left:auto; }
 }
 
 @media (max-height:400px) {
@@ -608,7 +846,7 @@ html, body {
     #scene-nav { width:44px; min-width:44px; }
     .nav-icon { font-size:16px; }
     .nav-text { font-size:4px; }
-    #char-sprite { width:38px; height:38px; }
+    .scene-char .char-sprite { width:38px; height:38px; }
     .machine-sprite { width:90px; height:90px; }
 }
 
@@ -617,11 +855,10 @@ html, body {
     .auth-farmhouse { width:180px; }
     .auth-char { width:76px; height:76px; }
     .auth-title { font-size:17px; }
-    --tile: 56px;
     .tile-grid { grid-template-columns:repeat(4,56px); grid-template-rows:repeat(4,56px); }
     .farm-tile { width:56px; height:56px; }
-    .deco-house { width:120px; }
+    .farm-house { width:110px; }
     .machine-sprite { width:150px; height:150px; }
-    #char-sprite { width:56px; height:56px; }
+    .scene-char .char-sprite { width:56px; height:56px; }
     .wood-panel { min-width:180px; }
 }

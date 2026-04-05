@@ -34,12 +34,14 @@ const ASSETS = {
 // ==========================================
 // GAME STATE
 // ==========================================
+const PLOT_COUNT = 16; // 4x4 grid
+
 const G = window.G = {
     user: null,
     displayName: '',
     coins: 0,
     inv: { corn: 0, flour: 0, farofa: 0 },
-    plots: Array.from({ length: 12 }, () => ({ state: 'empty', growth: 0 })),
+    plots: Array.from({ length: PLOT_COUNT }, () => ({ state: 'empty', growth: 0 })),
     upgrades: { growth: 0, value: 0, toast: 0, plots: 0 },
     selectedTool: 'plant',
     selectedIngredients: ['manteiga'],
@@ -83,7 +85,7 @@ function initAuth() {
             $$('.auth-tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             $$('.auth-form').forEach(f => f.classList.remove('active'));
-            $(`#${tab.dataset.tab}-form`).classList.add('active');
+            $('#' + tab.dataset.tab + '-form').classList.add('active');
             hideAuthMessages();
         });
     });
@@ -91,13 +93,13 @@ function initAuth() {
     $('#login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         hideAuthMessages();
-        const email = $('#login-email').value.trim();
-        const password = $('#login-password').value;
-        const btn = $('#login-form .auth-btn');
+        var email = $('#login-email').value.trim();
+        var password = $('#login-password').value;
+        var btn = $('#login-form .auth-btn');
         btn.disabled = true;
         btn.textContent = 'Entrando...';
 
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        var { data, error } = await sb.auth.signInWithPassword({ email, password });
 
         btn.disabled = false;
         btn.textContent = 'Jogar!';
@@ -115,14 +117,14 @@ function initAuth() {
     $('#register-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         hideAuthMessages();
-        const name = $('#reg-name').value.trim();
-        const email = $('#reg-email').value.trim();
-        const password = $('#reg-password').value;
-        const btn = $('#register-form .auth-btn');
+        var name = $('#reg-name').value.trim();
+        var email = $('#reg-email').value.trim();
+        var password = $('#reg-password').value;
+        var btn = $('#register-form .auth-btn');
         btn.disabled = true;
         btn.textContent = 'Criando...';
 
-        const { data, error } = await sb.auth.signUp({
+        var { data, error } = await sb.auth.signUp({
             email,
             password,
             options: { data: { display_name: name } }
@@ -159,7 +161,7 @@ function initAuth() {
 }
 
 async function checkSession() {
-    const { data: { session } } = await sb.auth.getSession();
+    var { data: { session } } = await sb.auth.getSession();
     if (session) {
         G.user = session.user;
         await loadGameFromDB();
@@ -177,13 +179,13 @@ function traduzirErro(msg) {
 }
 
 function showAuthError(msg) {
-    const el = $('#auth-error');
+    var el = $('#auth-error');
     el.textContent = msg;
     el.classList.remove('hidden');
 }
 
 function showAuthSuccess(msg) {
-    const el = $('#auth-success');
+    var el = $('#auth-success');
     el.textContent = msg;
     el.classList.remove('hidden');
 }
@@ -224,14 +226,14 @@ async function createSaveInDB(name) {
 }
 
 async function loadGameFromDB() {
-    const { data, error } = await sb
+    var { data, error } = await sb
         .from('game_saves')
         .select('*')
         .eq('user_id', G.user.id)
         .single();
 
     if (error || !data) {
-        const name = G.user.user_metadata?.display_name || 'Jogador';
+        var name = G.user.user_metadata?.display_name || 'Jogador';
         G.displayName = name;
         await createSaveInDB(name);
         return;
@@ -271,27 +273,27 @@ async function saveGameToDB() {
         .eq('user_id', G.user.id);
 }
 
-setInterval(() => { if (G.user) saveGameToDB(); }, 30000);
-window.addEventListener('beforeunload', () => { if (G.user) saveGameToDB(); });
+setInterval(function() { if (G.user) saveGameToDB(); }, 30000);
+window.addEventListener('beforeunload', function() { if (G.user) saveGameToDB(); });
 
 // ==========================================
 // CHARACTER
 // ==========================================
 function celebrateChar() {
-    const char = $('#character');
+    var char = $('#character');
     char.classList.remove('celebrate');
     void char.offsetWidth;
     char.classList.add('celebrate');
-    setTimeout(() => char.classList.remove('celebrate'), 600);
+    setTimeout(function() { char.classList.remove('celebrate'); }, 600);
 }
 
 function walkChar(direction) {
-    const sprite = $('#char-sprite');
-    const dir = direction || ['east', 'west'][Math.round(Math.random())];
-    const key = 'walk' + dir.charAt(0).toUpperCase() + dir.slice(1);
+    var sprite = $('#char-sprite');
+    var dir = direction || ['east', 'west'][Math.round(Math.random())];
+    var key = 'walk' + dir.charAt(0).toUpperCase() + dir.slice(1);
     if (ASSETS.character[key]) {
         sprite.src = ASSETS.character[key];
-        setTimeout(() => {
+        setTimeout(function() {
             sprite.src = ASSETS.character.south;
         }, 700);
     }
@@ -301,36 +303,36 @@ function walkChar(direction) {
 // SPEECH
 // ==========================================
 function speak(category) {
-    const lines = FALAS[category];
+    var lines = FALAS[category];
     if (!lines) return;
-    const msg = lines[Math.floor(Math.random() * lines.length)];
-    const el = $('#speech');
-    const txt = $('#speech-msg');
+    var msg = lines[Math.floor(Math.random() * lines.length)];
+    var el = $('#speech');
+    var txt = $('#speech-msg');
     txt.textContent = msg;
     el.classList.remove('hidden');
     clearTimeout(window._st);
-    window._st = setTimeout(() => el.classList.add('hidden'), 3000);
+    window._st = setTimeout(function() { el.classList.add('hidden'); }, 3000);
 }
 
 // ==========================================
 // NOTIFICATIONS
 // ==========================================
 function notify(msg, type) {
-    const el = document.createElement('div');
+    var el = document.createElement('div');
     el.className = 'notif notif-' + (type || 'ok');
     el.textContent = msg;
     $('#notifs').appendChild(el);
-    setTimeout(() => el.remove(), 2600);
+    setTimeout(function() { el.remove(); }, 2600);
 }
 
 function floatItem(emoji, x, y) {
-    const el = document.createElement('div');
+    var el = document.createElement('div');
     el.className = 'float-item';
     el.textContent = emoji;
     el.style.left = x + 'px';
     el.style.top = y + 'px';
     $('#game-world').appendChild(el);
-    setTimeout(() => el.remove(), 1000);
+    setTimeout(function() { el.remove(); }, 1000);
 }
 
 // ==========================================
@@ -354,10 +356,10 @@ function updateHUD() {
 }
 
 function getSellPrice() {
-    let p = BASE_PRICE + G.upgrades.value * 3;
+    var p = BASE_PRICE + G.upgrades.value * 3;
     if (G.lastQuality === 'perfect') p += 5;
     else if (G.lastQuality === 'good') p += 2;
-    const ingBonus = Math.max(0, G.selectedIngredients.length - 1) * 2;
+    var ingBonus = Math.max(0, G.selectedIngredients.length - 1) * 2;
     return p + ingBonus;
 }
 
@@ -365,32 +367,34 @@ function getSellPrice() {
 // FARM
 // ==========================================
 function buildFarm() {
-    const grid = $('#farm-grid');
+    var grid = $('#farm-grid');
     grid.innerHTML = '';
-    const count = window.innerWidth >= 768 ? 12 : (window.innerHeight > window.innerWidth ? 9 : 12);
-    // Ensure plots array matches
-    while (G.plots.length < count) G.plots.push({ state: 'empty', growth: 0 });
 
-    for (let i = 0; i < count; i++) {
-        const tile = document.createElement('div');
+    // Always 16 plots (4x4)
+    while (G.plots.length < PLOT_COUNT) G.plots.push({ state: 'empty', growth: 0 });
+
+    for (var i = 0; i < PLOT_COUNT; i++) {
+        var tile = document.createElement('div');
         tile.className = 'farm-tile';
         tile.dataset.idx = i;
         tile.innerHTML = '<div class="tile-plant"></div><div class="tile-bar"><div class="tile-bar-fill"></div></div>';
-        tile.addEventListener('click', function(e) { onTileClick(i, e); });
+        (function(idx) {
+            tile.addEventListener('click', function(e) { onTileClick(idx, e); });
+        })(i);
         grid.appendChild(tile);
     }
     updateFarmVisuals();
 }
 
 function onTileClick(idx, event) {
-    const plot = G.plots[idx];
-    const tiles = $$('.farm-tile');
-    const tile = tiles[idx];
+    var plot = G.plots[idx];
+    var tiles = $$('.farm-tile');
+    var tile = tiles[idx];
     if (!tile) return;
 
-    const rect = tile.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top;
+    var rect = tile.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top;
 
     if (G.selectedTool === 'plant' && plot.state === 'empty') {
         plot.state = 'growing';
@@ -404,8 +408,8 @@ function onTileClick(idx, event) {
         if (plot.growth >= MAX_GROWTH) plot.state = 'ready';
         speak('water');
         floatItem('💧', cx, cy);
-        tile.classList.add('tile-water-flash');
-        setTimeout(() => tile.classList.remove('tile-water-flash'), 600);
+        tile.classList.add('tile-water');
+        setTimeout(function() { tile.classList.remove('tile-water'); }, 600);
     } else if (G.selectedTool === 'harvest' && plot.state === 'ready') {
         plot.state = 'empty';
         plot.growth = 0;
@@ -415,13 +419,13 @@ function onTileClick(idx, event) {
         floatItem('🌽', cx, cy);
         notify('+' + CORN_PER_HARVEST + ' milho!');
 
-        const plant = tile.querySelector('.tile-plant');
+        var plant = tile.querySelector('.tile-plant');
         if (plant) {
             plant.classList.add('harvest-shake');
-            setTimeout(() => plant.classList.remove('harvest-shake'), 500);
+            setTimeout(function() { plant.classList.remove('harvest-shake'); }, 500);
         }
     } else {
-        return; // no action
+        return;
     }
 
     updateFarmVisuals();
@@ -499,8 +503,8 @@ function grindCorn() {
     G.inv.corn -= amt;
     G.inv.flour += amt;
 
-    var station = $('.grinder-station');
-    station.classList.add('grinding');
+    var area = $('.machine-area');
+    area.classList.add('grinding');
 
     // Particles
     var particles = $('#grinder-particles');
@@ -508,7 +512,7 @@ function grindCorn() {
         (function(idx) {
             setTimeout(function() {
                 var p = document.createElement('div');
-                p.className = 'grinder-particle';
+                p.className = 'grind-p';
                 p.style.setProperty('--tx', (Math.random() * 50 - 25) + 'px');
                 p.style.left = (Math.random() * 40 - 20) + 'px';
                 particles.appendChild(p);
@@ -517,7 +521,7 @@ function grindCorn() {
         })(i);
     }
 
-    setTimeout(function() { station.classList.remove('grinding'); }, 1500);
+    setTimeout(function() { area.classList.remove('grinding'); }, 1500);
 
     speak('grind');
     celebrateChar();
@@ -690,16 +694,17 @@ function switchScene(name) {
 
     walkChar();
 
+    // Position character based on scene (landscape sidebar layout)
     var char = $('#character');
     switch (name) {
         case 'farm':
-            char.style.left = '10px'; char.style.bottom = '35%'; break;
+            char.style.left = '10px'; char.style.bottom = '20px'; break;
         case 'process':
-            char.style.left = '8px'; char.style.bottom = '28%'; break;
+            char.style.left = '15px'; char.style.bottom = '20px'; break;
         case 'cooking':
-            char.style.left = '6px'; char.style.bottom = '30%'; break;
+            char.style.left = '10px'; char.style.bottom = '20px'; break;
         case 'sell':
-            char.style.left = '12px'; char.style.bottom = '28%'; break;
+            char.style.left = '15px'; char.style.bottom = '20px'; break;
     }
 
     updateHUD();
@@ -736,7 +741,7 @@ function init() {
     $$('.ing-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
             var ing = btn.dataset.ing;
-            if (ing === 'manteiga') return; // always selected
+            if (ing === 'manteiga') return;
             var idx = G.selectedIngredients.indexOf(ing);
             if (idx >= 0) G.selectedIngredients.splice(idx, 1);
             else G.selectedIngredients.push(ing);
@@ -752,13 +757,6 @@ function init() {
 
     // Growth tick
     setInterval(growthTick, 500);
-
-    // Rebuild farm on resize (portrait/landscape switch)
-    var resizeTimer;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(buildFarm, 300);
-    });
 
     // Auth
     initAuth();

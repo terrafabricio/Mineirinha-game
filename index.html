@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="screen-orientation" content="landscape">
     <title>Sítio da Mineirinha</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
@@ -13,9 +14,7 @@
     <div id="auth-screen" class="screen active">
         <div class="auth-bg">
             <div class="auth-clouds">
-                <div class="cloud c1"></div>
-                <div class="cloud c2"></div>
-                <div class="cloud c3"></div>
+                <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
             </div>
             <div class="auth-ground"></div>
         </div>
@@ -32,29 +31,14 @@
                     <button class="auth-tab" data-tab="register">Cadastrar</button>
                 </div>
                 <form id="login-form" class="auth-form active">
-                    <div class="input-group">
-                        <label>E-mail</label>
-                        <input type="email" id="login-email" required placeholder="seu@email.com" autocomplete="email">
-                    </div>
-                    <div class="input-group">
-                        <label>Senha</label>
-                        <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
-                    </div>
+                    <div class="input-group"><label>E-mail</label><input type="email" id="login-email" required placeholder="seu@email.com" autocomplete="email"></div>
+                    <div class="input-group"><label>Senha</label><input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password"></div>
                     <button type="submit" class="auth-btn">Jogar!</button>
                 </form>
                 <form id="register-form" class="auth-form">
-                    <div class="input-group">
-                        <label>Nome no Jogo</label>
-                        <input type="text" id="reg-name" required placeholder="Mineirinha123" autocomplete="username">
-                    </div>
-                    <div class="input-group">
-                        <label>E-mail</label>
-                        <input type="email" id="reg-email" required placeholder="seu@email.com" autocomplete="email">
-                    </div>
-                    <div class="input-group">
-                        <label>Senha</label>
-                        <input type="password" id="reg-password" required placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password">
-                    </div>
+                    <div class="input-group"><label>Nome</label><input type="text" id="reg-name" required placeholder="Mineirinha123" autocomplete="username"></div>
+                    <div class="input-group"><label>E-mail</label><input type="email" id="reg-email" required placeholder="seu@email.com" autocomplete="email"></div>
+                    <div class="input-group"><label>Senha</label><input type="password" id="reg-password" required placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password"></div>
                     <button type="submit" class="auth-btn">Criar Conta</button>
                 </form>
                 <div id="auth-error" class="auth-error hidden"></div>
@@ -68,256 +52,149 @@
         <!-- HUD Top Bar -->
         <div id="hud">
             <div class="hud-left">
-                <div class="hud-avatar">
-                    <img src="assets/character/rotations/south.png" class="hud-avatar-img" alt="">
-                </div>
+                <div class="hud-avatar"><img src="assets/character/rotations/south.png" class="hud-avatar-img" alt=""></div>
                 <span class="hud-player" id="hud-player-name">Jogador</span>
             </div>
             <div class="hud-center">
-                <div class="hud-item" title="Milho">
-                    <img src="assets/crops/corn_stage_4.png" class="hud-icon">
-                    <span id="hud-corn">0</span>
-                </div>
-                <div class="hud-item" title="Farinha">
-                    <span class="hud-icon-emoji">🌾</span>
-                    <span id="hud-flour">0</span>
-                </div>
-                <div class="hud-item" title="Farofa">
-                    <img src="assets/products/packaged_farofa.png" class="hud-icon">
-                    <span id="hud-farofa">0</span>
-                </div>
+                <div class="hud-item" title="Milho"><img src="assets/crops/corn_stage_4.png" class="hud-icon"><span id="hud-corn">0</span></div>
+                <div class="hud-item" title="Farinha"><span class="hud-icon-emoji">🌾</span><span id="hud-flour">0</span></div>
+                <div class="hud-item" title="Farofa"><img src="assets/products/packaged_farofa.png" class="hud-icon"><span id="hud-farofa">0</span></div>
             </div>
             <div class="hud-right">
-                <div class="hud-coins" id="hud-coins">
-                    <span class="coin-icon">$</span>
-                    <span id="hud-coin-count">0</span>
-                </div>
-                <button class="hud-btn-menu" id="btn-logout" title="Sair">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v2H4v8h3v2H2V2zm7 3l4 3-4 3V9H6V7h3V5z"/></svg>
+                <div class="hud-coins" id="hud-coins"><span class="coin-symbol">$</span><span id="hud-coin-count">0</span></div>
+                <button class="hud-btn-logout" id="btn-logout" title="Sair">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v2H4v8h3v2H2V2zm7 3l4 3-4 3V9H6V7h3V5z"/></svg>
                 </button>
             </div>
         </div>
 
-        <!-- Game World -->
-        <div id="game-world">
-            <!-- Environment layer -->
-            <div id="env-layer">
-                <div class="env-trees env-trees-top"></div>
-                <div class="env-trees env-trees-left"></div>
-            </div>
+        <!-- Main Game Layout: sidebar + world -->
+        <div id="game-layout">
+            <!-- Left Scene Nav (vertical) -->
+            <nav id="scene-nav">
+                <button class="scene-btn active" data-scene="farm">
+                    <span class="nav-icon">🌱</span><span class="nav-text">Roça</span>
+                </button>
+                <button class="scene-btn" data-scene="process">
+                    <span class="nav-icon">⚙️</span><span class="nav-text">Moinho</span>
+                </button>
+                <button class="scene-btn" data-scene="cooking">
+                    <span class="nav-icon">🍳</span><span class="nav-text">Cozinha</span>
+                </button>
+                <button class="scene-btn" data-scene="sell">
+                    <span class="nav-icon">🏪</span><span class="nav-text">Mercado</span>
+                </button>
+            </nav>
 
-            <!-- Character -->
-            <div id="character">
-                <img src="assets/character/rotations/south.png" id="char-sprite" alt="Mineirinha">
-                <div class="char-shadow"></div>
-            </div>
+            <!-- Game World -->
+            <div id="game-world">
+                <!-- Character sprite -->
+                <div id="character">
+                    <img src="assets/character/rotations/south.png" id="char-sprite" alt="Mineirinha">
+                    <div class="char-shadow"></div>
+                </div>
+                <div id="speech" class="hidden"><span id="speech-msg"></span></div>
 
-            <!-- Speech bubble -->
-            <div id="speech" class="hidden">
-                <span id="speech-msg"></span>
-                <div class="speech-arrow"></div>
-            </div>
-
-            <!-- ====== SCENE: FARM (Roça) ====== -->
-            <div id="scene-farm" class="scene active">
-                <div class="farm-scene-layout">
-                    <div class="farm-deco-house">
-                        <img src="assets/structures/farmhouse.png" class="deco-farmhouse" alt="">
-                    </div>
-                    <div class="farm-area">
-                        <div class="farm-label">Roça de Milho</div>
-                        <div class="farm-grid" id="farm-grid">
-                            <!-- 4x3 grid built by JS -->
+                <!-- ====== SCENES ====== -->
+                <!-- FARM -->
+                <div id="scene-farm" class="scene active">
+                    <div class="farm-world">
+                        <!-- Decorations rendered by CSS -->
+                        <div class="farm-deco">
+                            <img src="assets/structures/farmhouse.png" class="deco-house" alt="">
                         </div>
-                    </div>
-                    <div class="farm-toolbar" id="farm-toolbar">
-                        <button class="tool-btn active" data-tool="plant" title="Plantar">
-                            <span class="tool-icon">🌱</span>
-                            <span class="tool-name">Plantar</span>
-                        </button>
-                        <button class="tool-btn" data-tool="water" title="Regar">
-                            <span class="tool-icon">💧</span>
-                            <span class="tool-name">Regar</span>
-                        </button>
-                        <button class="tool-btn" data-tool="harvest" title="Colher">
-                            <span class="tool-icon">🫳</span>
-                            <span class="tool-name">Colher</span>
-                        </button>
+                        <!-- Tile grid (4x4 = 16 plots) -->
+                        <div class="tile-grid" id="farm-grid"></div>
+                        <!-- Farm toolbar -->
+                        <div class="farm-tools" id="farm-tools">
+                            <button class="tool-btn active" data-tool="plant" title="Plantar"><span class="tool-ico">🌱</span></button>
+                            <button class="tool-btn" data-tool="water" title="Regar"><span class="tool-ico">💧</span></button>
+                            <button class="tool-btn" data-tool="harvest" title="Colher"><span class="tool-ico">🫳</span></button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ====== SCENE: PROCESS (Moinho) ====== -->
-            <div id="scene-process" class="scene">
-                <div class="scene-inner">
-                    <div class="process-room">
-                        <div class="grinder-station">
-                            <img src="assets/machines/corn_grinder.png" class="grinder-img" id="grinder-img" alt="Moinho de Milho">
-                            <div class="grinder-particles" id="grinder-particles"></div>
-                            <div class="grinder-label">Moinho de Milho</div>
+                <!-- PROCESS -->
+                <div id="scene-process" class="scene">
+                    <div class="station-layout">
+                        <div class="machine-area">
+                            <img src="assets/machines/corn_grinder.png" class="machine-sprite" id="grinder-sprite" alt="Moinho">
+                            <div class="machine-particles" id="grinder-particles"></div>
                         </div>
-                        <div class="process-panel wood-panel">
-                            <div class="panel-header">Moer Milho</div>
-                            <div class="panel-row">
-                                <img src="assets/crops/corn_stage_4.png" class="panel-item-icon">
-                                <span class="panel-item-count" id="proc-corn">0</span>
-                                <span class="panel-arrow">→</span>
-                                <span class="panel-item-emoji">🌾</span>
+                        <div class="station-panel wood-panel">
+                            <div class="panel-title">Moer Milho</div>
+                            <div class="panel-io">
+                                <div class="io-item"><img src="assets/crops/corn_stage_4.png" class="io-icon"><span class="io-count" id="proc-corn">0</span></div>
+                                <div class="io-arrow">→</div>
+                                <div class="io-item"><span class="io-emoji">🌾</span></div>
                             </div>
-                            <button class="game-btn btn-action" id="btn-grind">
-                                <span class="btn-icon">⚙️</span> Moer
-                            </button>
-                            <div class="process-result hidden" id="process-result"></div>
+                            <button class="action-btn" id="btn-grind">Moer</button>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ====== SCENE: COOKING (Cozinha) ====== -->
-            <div id="scene-cooking" class="scene">
-                <div class="scene-inner">
-                    <div class="kitchen-room">
-                        <div class="stove-station">
+                <!-- COOKING -->
+                <div id="scene-cooking" class="scene">
+                    <div class="station-layout">
+                        <div class="cook-area">
                             <div class="stove" id="stove">
-                                <div class="stove-body">
-                                    <div class="stove-top"></div>
-                                    <div class="stove-door"></div>
-                                </div>
-                                <div class="pan" id="pan">
-                                    <div class="pan-body">
-                                        <div class="pan-contents" id="pan-contents"></div>
-                                    </div>
-                                    <div class="pan-handle"></div>
-                                </div>
-                                <div class="fire" id="stove-fire">
-                                    <div class="flame f1"></div>
-                                    <div class="flame f2"></div>
-                                    <div class="flame f3"></div>
-                                </div>
-                                <div class="steam" id="steam">
-                                    <div class="steam-particle s1"></div>
-                                    <div class="steam-particle s2"></div>
-                                    <div class="steam-particle s3"></div>
-                                </div>
+                                <div class="stove-body"></div>
+                                <div class="pan"><div class="pan-contents" id="pan-contents"></div></div>
+                                <div class="fire"><div class="flame f1"></div><div class="flame f2"></div><div class="flame f3"></div></div>
+                                <div class="steam"><div class="steam-p s1"></div><div class="steam-p s2"></div><div class="steam-p s3"></div></div>
                             </div>
-                            <div class="cook-timing" id="cook-timing">
-                                <div class="timing-label">Ponto da Farofa</div>
+                            <div class="timing-wrap" id="cook-timing">
                                 <div class="timing-bar">
-                                    <div class="timing-zone timing-raw"></div>
-                                    <div class="timing-zone timing-good"></div>
-                                    <div class="timing-zone timing-perfect"></div>
-                                    <div class="timing-zone timing-good2"></div>
-                                    <div class="timing-zone timing-burn"></div>
+                                    <div class="tz tz-raw"></div><div class="tz tz-good"></div><div class="tz tz-perfect"></div><div class="tz tz-good2"></div><div class="tz tz-burn"></div>
                                     <div class="timing-needle" id="timing-needle"></div>
                                 </div>
-                                <div class="timing-labels">
-                                    <span>Cru</span><span>Bom</span><span>Perfeito</span><span>Bom</span><span>Queimado</span>
-                                </div>
                             </div>
                         </div>
-                        <div class="cook-panel wood-panel">
-                            <div class="panel-header">Cozinhar Farofa</div>
-                            <div class="ingredient-shelf">
-                                <div class="shelf-label">Ingredientes:</div>
-                                <div class="ingredient-row" id="ingredient-row">
-                                    <button class="ing-btn selected" data-ing="manteiga" title="Manteiga">
-                                        <span class="ing-emoji">🧈</span>
-                                        <span class="ing-name">Manteiga</span>
-                                    </button>
-                                    <button class="ing-btn" data-ing="alho" title="Alho">
-                                        <img src="assets/ingredients/garlic.png" class="ing-img" alt="">
-                                        <span class="ing-name">Alho</span>
-                                    </button>
-                                    <button class="ing-btn" data-ing="cebola" title="Cebola">
-                                        <img src="assets/ingredients/onion.png" class="ing-img" alt="">
-                                        <span class="ing-name">Cebola</span>
-                                    </button>
-                                    <button class="ing-btn" data-ing="bacon" title="Bacon">
-                                        <span class="ing-emoji">🥓</span>
-                                        <span class="ing-name">Bacon</span>
-                                    </button>
-                                </div>
+                        <div class="station-panel wood-panel">
+                            <div class="panel-title">Cozinhar</div>
+                            <div class="ing-row" id="ing-row">
+                                <button class="ing-btn selected" data-ing="manteiga">🧈</button>
+                                <button class="ing-btn" data-ing="alho"><img src="assets/ingredients/garlic.png" class="ing-img" alt=""></button>
+                                <button class="ing-btn" data-ing="cebola"><img src="assets/ingredients/onion.png" class="ing-img" alt=""></button>
+                                <button class="ing-btn" data-ing="bacon">🥓</button>
                             </div>
-                            <div class="panel-row">
-                                <span class="panel-item-emoji">🌾</span>
-                                <span>Farinha:</span>
-                                <strong id="cook-flour">0</strong>
+                            <div class="panel-io">
+                                <div class="io-item"><span class="io-emoji">🌾</span><span class="io-count" id="cook-flour">0</span></div>
                             </div>
-                            <button class="game-btn btn-action" id="btn-cook">
-                                <span class="btn-icon">🔥</span> Torrar Farofa
-                            </button>
-                            <button class="game-btn btn-stop hidden" id="btn-cook-stop">
-                                ✋ PARAR!
-                            </button>
+                            <button class="action-btn" id="btn-cook">Torrar</button>
+                            <button class="action-btn action-stop hidden" id="btn-cook-stop">PARAR!</button>
                             <div id="cook-result" class="cook-result hidden"></div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ====== SCENE: SELL (Mercado) ====== -->
-            <div id="scene-sell" class="scene">
-                <div class="scene-inner">
-                    <div class="market-room">
-                        <div class="market-stall">
-                            <div class="stall-sign">Mercado da Vila</div>
-                            <div class="stall-awning"></div>
-                            <div class="stall-display">
-                                <img src="assets/products/packaged_farofa.png" class="stall-product" id="stall-product" alt="Farofa">
-                                <div class="stall-sparkle" id="stall-sparkle"></div>
+                <!-- SELL -->
+                <div id="scene-sell" class="scene">
+                    <div class="station-layout">
+                        <div class="market-area">
+                            <div class="market-stall">
+                                <div class="stall-awning"></div>
+                                <div class="stall-body">
+                                    <img src="assets/products/packaged_farofa.png" class="stall-product" id="stall-product" alt="Farofa">
+                                    <div class="stall-sparkle" id="stall-sparkle"></div>
+                                </div>
+                                <div class="stall-base"></div>
                             </div>
-                            <div class="stall-counter-base"></div>
                         </div>
-                        <div class="sell-panel wood-panel">
-                            <div class="panel-header">Vender Farofa</div>
-                            <div class="panel-row">
-                                <img src="assets/products/packaged_farofa.png" class="panel-item-icon">
-                                <span>Estoque:</span>
-                                <strong id="sell-farofa">0</strong>
+                        <div class="station-panel wood-panel">
+                            <div class="panel-title">Vender</div>
+                            <div class="panel-io">
+                                <div class="io-item"><img src="assets/products/packaged_farofa.png" class="io-icon"><span class="io-count" id="sell-farofa">0</span></div>
+                                <div class="io-price"><span class="coin-symbol">$</span><span id="sell-price-val">10</span></div>
                             </div>
-                            <div class="panel-row price-row">
-                                <span class="coin-icon">$</span>
-                                <span>Preço:</span>
-                                <strong id="sell-price-val">10</strong>
-                            </div>
-                            <div class="sell-buttons">
-                                <button class="game-btn btn-action" id="btn-sell">
-                                    <span class="btn-icon">💰</span> Vender 1
-                                </button>
-                                <button class="game-btn btn-sell-all" id="btn-sell-all">
-                                    💰 Vender Tudo
-                                </button>
-                            </div>
+                            <button class="action-btn" id="btn-sell">Vender 1</button>
+                            <button class="action-btn action-gold" id="btn-sell-all">Vender Tudo</button>
                         </div>
                     </div>
+                    <div id="coin-anim-container"></div>
                 </div>
-                <div id="coin-anim-container"></div>
             </div>
         </div>
-
-        <!-- Bottom Navigation -->
-        <nav id="scene-nav">
-            <button class="scene-btn active" data-scene="farm">
-                <span class="nav-icon">🌱</span>
-                <span class="nav-text">Roça</span>
-                <div class="nav-indicator"></div>
-            </button>
-            <button class="scene-btn" data-scene="process">
-                <span class="nav-icon">⚙️</span>
-                <span class="nav-text">Moinho</span>
-                <div class="nav-indicator"></div>
-            </button>
-            <button class="scene-btn" data-scene="cooking">
-                <span class="nav-icon">🍳</span>
-                <span class="nav-text">Cozinha</span>
-                <div class="nav-indicator"></div>
-            </button>
-            <button class="scene-btn" data-scene="sell">
-                <span class="nav-icon">🏪</span>
-                <span class="nav-text">Mercado</span>
-                <div class="nav-indicator"></div>
-            </button>
-        </nav>
     </div>
 
     <!-- Floating notifications -->
